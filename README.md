@@ -1,57 +1,76 @@
 spine-estimation
 ==============================
 
-Spine estimation with NNs
+<center>
+<h2>Spine estimation with NNs</h2>
+</center>
 
-Project Organization
-------------
+<center>
+<img src="./reports/figures/video.gif" alt="Alternative Text" width="400">
+</center>
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+<p>
+<p>
+This repository is a project for estimating the spine joints of a human body given the 3D coordinates of the joints of the rest of the body.
+
+Initially it is performed an EDA of the data, to understand the distribution of the data and the correlation between the features.
+Then, it is performed a feature engineering, to create new features that can help the model to learn better.
+Finally, it is performed a model selection, and hyperparameter tuning, to find the best model for this problem.
+
+The report can be found under the folder [reports](reports).
+
+There are 3 reports:
+- [EDA](reports/1.report-EDA.md)
+- [Models](reports/2.report-models.md)
+- [System pipeline](reports/3.report-pipeline.md)
 
 
---------
+## Quick Start
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+### Installation
+
+1. Clone the repository
+
+2. Install the requirements
+
+OR
+
+Make sure that you have installed `Docker` and `make`.
+
+and run the following:
+
+### Usage
+
+1. From the root of the repository, run the following command to build the docker image:
+
+```bash
+make build
+```
+
+2. Run the following command to run a hyperparameter tuning:
+
+```bash
+make run-baseline
+```
+
+3. You can run the following command to see the results of the hyperparameter tuning on `MLFlow`:
+
+```bash
+make mlflow
+```
+
+4. You can run hyperparameter tuning with different models, by changing `make` command:
+
+```bash
+make run-baseline
+make run-mlp
+make run-rnn
+make run-lstm
+```
+
+5. You can run a jupyter notebook with the following command:
+
+```bash
+make jupyter
+```
+Which will open a jupyter notebook in the `notebooks` folder.

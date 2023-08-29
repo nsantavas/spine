@@ -251,7 +251,7 @@ class SequentialSkeletonDataset(BaseDataset):
         self.minimum = pd.concat(self._df, ignore_index=True).to_numpy().min()
         self.maximum = pd.concat(self._df, ignore_index=True).to_numpy().max()
 
-        self._sequences = self.create_dataframe_sequences(self._df, self.sequence_length + 1)
+        self._sequences = self.create_dataframe_sequences(self._df, self.sequence_length)
 
     def _load_and_process_data(self) -> pd.DataFrame:
         """

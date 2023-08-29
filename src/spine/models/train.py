@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
 from torch.nn.modules.loss import _Loss
@@ -36,7 +36,7 @@ class Trainer:
 
     def train_model(
         self, train_loader: DataLoader, val_loader: DataLoader, epochs: int = 100
-    ) -> Tuple[List[float], List[float]]:
+    ) -> Dict[str, List[float]]:
         """
         Train the model for a given number of epochs.
 
@@ -46,7 +46,7 @@ class Trainer:
             epochs (int): Number of epochs to train for.
 
         Returns:
-            tuple: A tuple containing lists of training and validation losses for each epoch.
+            Dict[str, List[float]]: A dictionary containing the training and validation loss
         """
         train_losses = []
         val_losses = []
@@ -72,9 +72,16 @@ class Trainer:
                 f"Epoch {epoch+1}/{epochs} - Train loss: {train_loss:.4f}, Val loss: {val_loss:.4f}"  # noqa: E501
             )
 
-        return train_losses, val_losses
+        results = {
+            "train_losses": train_losses,
+            "val_losses": val_losses,
+            "train_metric": self.train_metric_values,
+            "val_metric": self.val_metric_values,
+        }
 
-    def test_model(self, test_loader: DataLoader) -> float:
+        return results
+
+    def test_model(self, test_loader: DataLoader) -> Dict[str, float]:
         """
         Evaluate the model on the test set.
 
@@ -82,11 +89,20 @@ class Trainer:
             test_loader (DataLoader): DataLoader for test data.
 
         Returns:
-            float: The test loss.
+            Dict[str, float]: A dictionary containing the test loss and test metric
         """
-        test_loss = self._evaluate(test_loader)
-        tqdm.write(f"Test Loss: {test_loss:.4f}")
-        return test_loss
+        self.test_loss = self._evaluate(test_loader)
+        tqdm.write(f"Test Loss: {self.test_loss:.4f}")
+        if self.metric_fn:
+            self.test_metric = self._compute_metric(test_loader)
+            tqdm.write(f"Test Metric: {self.test_metric:.4f}")
+
+        results = {
+            "test_loss": self.test_loss,
+        }
+        if self.metric_fn:
+            results["test_metric"] = self.test_metric
+        return results
 
     def _train_one_epoch(self, loader: DataLoader) -> float:
         """
@@ -167,4 +183,7 @@ class Trainer:
                 metric_val = self.metric_fn(outputs, targets)
                 total_metric += metric_val
 
-        return total_metric / len(loader)
+        x = (total_metric / len(loader)).item()  # type: ignore
+        if isinstance(x, torch.Tensor):
+            x = x.item()
+        return x

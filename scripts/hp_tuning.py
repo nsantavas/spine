@@ -24,7 +24,7 @@ if __name__ == "__main__":
         input_size=21,
         output_size=12,
         model_type=args.model_type,
-        epochs=10,
+        epochs=30,
         n_trials=10,
     )
     tuner.tune()

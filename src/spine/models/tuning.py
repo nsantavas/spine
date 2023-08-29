@@ -1,5 +1,6 @@
 import random
 import string
+from typing import Dict
 
 import mlflow
 import optuna
@@ -77,19 +78,19 @@ class Tuner:
             return models.BaselineModel(self.input_size, self.output_size)
 
         elif self.model_type == "MLP":
-            hidden_size = trial.suggest_int("hidden_size", 16, 512)
+            hidden_size = trial.suggest_int("hidden_size", 16, 256)
             return models.MLP(self.input_size, hidden_size, self.output_size)
 
         elif self.model_type == "RNNModel":
             num_layers = trial.suggest_int("num_layers", 1, 3)
-            hidden_size = trial.suggest_int("hidden_size", 16, 512)
+            hidden_size = trial.suggest_int("hidden_size", 16, 256)
             return models.RNNModel(
                 self.input_size, hidden_size, self.output_size, num_layers=num_layers
             )
 
         elif self.model_type == "LSTMModel":
             num_layers = trial.suggest_int("num_layers", 1, 3)
-            hidden_size = trial.suggest_int("hidden_size", 16, 512)
+            hidden_size = trial.suggest_int("hidden_size", 16, 256)
             return models.LSTMModel(
                 self.input_size, hidden_size, self.output_size, num_layers=num_layers
             )
@@ -97,7 +98,7 @@ class Tuner:
         else:
             raise ValueError(f"Model type {self.model_type} not supported.")
 
-    def define_hyperparameters(self, trial: optuna.Trial) -> dict:
+    def define_hyperparameters(self, trial: optuna.Trial) -> Dict:
         """
         Define hyperparameters for the training.
 
@@ -105,7 +106,7 @@ class Tuner:
             trial (optuna.Trial): The trial object.
 
         Returns:
-            dict: A dictionary containing the hyperparameters.
+            Dict: A dictionary containing the hyperparameters.
         """
 
         lr = trial.suggest_float("lr", 1e-5, 1e-1, log=True)
@@ -133,6 +134,10 @@ class Tuner:
             float: The value of the objective function.
         """
         random_string = "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
+
+        mlruns_dir = f"file:///{'/'.join(self.directory.split('/')[:-3])}/mlruns"
+        mlflow.set_tracking_uri(mlruns_dir)
+
         with mlflow.start_run(run_name=f"TuningTrial_{self.model_type}_{random_string}"):
             mlflow.log_param("model_type", self.model_type)
             hyperparameters = self.define_hyperparameters(trial)
@@ -143,27 +148,41 @@ class Tuner:
                 dataset, train_ratio=0.7, val_ratio=0.2
             )
 
-            train_dataloader = DataLoader(train_set, batch_size=hyperparameters["batch_size"])
+            train_dataloader = DataLoader(
+                train_set, batch_size=hyperparameters["batch_size"], shuffle=True
+            )
             val_dataloader = DataLoader(val_set, batch_size=hyperparameters["batch_size"])
             test_dataloader = DataLoader(test_set, batch_size=hyperparameters["batch_size"])
             optimizer = hyperparameters["optimizer"](model.parameters(), lr=hyperparameters["lr"])
 
-            trainer = train.Trainer(model, self.loss_function, optimizer, device="cpu")
+            trainer = train.Trainer(
+                model, self.loss_function, optimizer, metric_fn=nn.L1Loss(), device="cpu"
+            )
 
             for key, value in trial.params.items():
                 mlflow.log_param(key, value)
 
-            train_losses, eval_losses = trainer.train_model(
+            train_val_losses = trainer.train_model(
                 train_dataloader, val_dataloader, epochs=self.epochs
             )
-            test_loss = trainer.test_model(test_dataloader)
+            test_losses = trainer.test_model(test_dataloader)
 
-            [mlflow.log_metric("train_loss", train_loss) for train_loss in train_losses]
-            [mlflow.log_metric("val_loss", eval_loss) for eval_loss in eval_losses]
+            self._log_metrics(train_val_losses)
+            self._log_metrics(test_losses)
 
-            mlflow.log_metric("test_loss", test_loss)
+            return train_val_losses["val_losses"][-1]
 
-            return eval_losses[-1]
+    def _log_metrics(self, data: Dict) -> None:
+        """Log metrics
+
+        Args:
+            data: The data to log.
+        """
+        for key, value in data.items():
+            if isinstance(value, float):
+                mlflow.log_metric(key, value)
+            else:
+                [mlflow.log_metric(key, val) for val in value]
 
     def tune(self) -> None:
         """
@@ -173,7 +192,6 @@ class Tuner:
         study.optimize(self.objective, n_trials=self.n_trials)
         self.best_params = study.best_params  # type: ignore
 
-        # Display results
         print("Best trial:")
         trial = study.best_trial
         print("Value: ", trial.value)

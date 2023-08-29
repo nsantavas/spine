@@ -14,7 +14,6 @@ class BaselineModel(nn.Module):
         """
         super(BaselineModel, self).__init__()
 
-        # Define the architecture
         self.fc = nn.Linear(input_size, output_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -44,7 +43,6 @@ class MLP(nn.Module):
         """
         super(MLP, self).__init__()
 
-        # Define the architecture
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, output_size)
 
@@ -76,10 +74,7 @@ class RNNModel(nn.Module):
         """
         super(RNNModel, self).__init__()
 
-        # RNN layer
         self.rnn = nn.RNN(input_size, hidden_size, num_layers=num_layers, batch_first=True)
-
-        # Fully connected layer to get the final output
         self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -92,7 +87,6 @@ class RNNModel(nn.Module):
         Returns:
             torch.Tensor: The output tensor.
         """
-        # Pass input through RNN layer
         out, _ = self.rnn(x)
         x = self.fc(out[:, -1, :])
         return x
@@ -111,10 +105,7 @@ class LSTMModel(nn.Module):
         """
         super(LSTMModel, self).__init__()
 
-        # LSTM layer
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers=num_layers, batch_first=True)
-
-        # Fully connected layer to get the final output
         self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -127,7 +118,6 @@ class LSTMModel(nn.Module):
         Returns:
             torch.Tensor: The output tensor.
         """
-        # Pass input through LSTM layer
         out, (h, c) = self.lstm(x)
         x = self.fc(out[:, -1, :])
         return x
