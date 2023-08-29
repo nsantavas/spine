@@ -1,0 +1,287 @@
+<style>
+    .subplot-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .subplot {
+        flex: 1;
+        max-width: 600px;
+        text-align: center;
+    }
+</style>
+
+# Spine Joints prediction
+
+## Introduction
+
+This report is a summary of the work done during the project. The task at hand, is to address the missing spine data in the player movement models, and accurately predict them from the rest joints of the human body.
+
+## Data
+
+The data provided for the project is a set of 3D coordinates of the joints of the human body, for a set of players. The data is provided in the form of a CSV file, with each row representing a frame of the player's movement, and each column representing a joint of the human body. Each joint column stores the 3D coordinates of the joint in the form of (x, y, z) coordinates. The data is provided for 17 joints, and the joints are named as follows:
+| # | Body Part       |
+|-------------|-----------------|
+| 1           | Nose            |
+| 2           | EyeLeft         |
+| 3           | EyeRight        |
+| 4           | EarLeft         |
+| 5           | EarRight        |
+| 6           | ShoulderLeft    |
+| 7           | ShoulderRight   |
+| 8           | ElbowLeft       |
+| 9           | ElbowRight      |
+| 10          | WristLeft       |
+| 11          | WristRight      |
+| 12          | HipLeft         |
+| 13          | HipRight        |
+| 14          | KneeLeft        |
+| 15          | KneeRight       |
+| 16          | AnkleLeft       |
+| 17          | AnkleRight      |
+| 18          | ToesLeft        |
+| 19          | ToesRight       |
+| 20          | Spine           |
+| 21          | Spine1          |
+| 22          | Spine2          |
+| 23          | Spine3          |
+| 24          | LeftIndexFinger |
+| 25          | ThumbLeft       |
+| 26          | PinkyLeft       |
+| 27          | RightIndexFinger|
+| 28          | ThumbRight      |
+| 29          | PinkyRight      |
+| 30          | BigToeLeft      |
+| 31          | SmallToeLeft    |
+| 32          | BigToeRight     |
+| 33          | SmallToeRight   |
+| 34          | PlayerPosition  |
+
+
+The XYZ coordinates of the joints are the real world coordinates of each joint. The last coordinate though is the player position, which is the position of the player in the field. Considering that the frame of reference for our task is the player, we can use this coordinate to transform the rest of the coordinates to the player's frame of reference.
+
+## Visualization
+
+In order to get a better understanding of the data provided, we can visualize the data. Under the `spine.visualization.visualize` we can find some helper components in order to visualize the data. Below we can see a sample visualization of the data for a single player.
+
+![Visualization of the data](./figures/frame_0.png)
+
+Note that for simplicity, the head, hands and feet joints are averaged to a single point.
+Morevoer, to better understand the temporal aspect of the data, below there is a sample gif of a randomly selected file.
+
+![Visualization of the data](./figures/video.gif)
+
+## Sanity Check
+
+To ensure the integrity and correctness of the data, a sanity check was performed. The check ensures that all the joints exist in every file, as well as that all the cells contain valid values and are in the expected format (XYZ).
+
+For more information on the sanity check, please refer to the `spine.data.utils` module.
+
+## Exploratory Data Analysis
+
+After visualizing the data, and thus getting a basic understanding of the nature of the data provided, we can perform some exploratory data analysis. The goal of the analysis is to get a better understanding of the data, that will help us to formulate a solution to the problem at hand.
+
+### Spatial Analysis
+
+#### Hypothesis Formulation
+
+The first step of the analysis is to formulate a hypothesis. The hypothesis is a statement that we believe to be true, and we will try to prove it.
+<p>
+Considering the mechanics of the human body, we can assume that the spine joints are not independent of the rest of the joints. In other words, we can assume that the spine joints are dependent on the rest of the joints. This means that we can use the rest of the joints to predict the spine joints. However, we further assume that the spine joints are not dependent to the same degree on all the joints. In other words, we can assume that the spine joints are dependent on some joints more than others. This means that -potentially- a subset of the joints of the human body may be more informative than the rest of the joints. Conversely, some joints may introduce noise to the prediction of the spine joints, which in turn may lead to a worse prediction. Thus, the aim of the analysis is to find the subset of joints that are more informative for the prediction of the spine joints.
+</p>
+
+#### Correlation
+
+The first step of the analysis is to find the correlation between the spine joints and the rest of the joints. The correlation is a measure of the linear relationship between two variables. The correlation coefficient is a value between -1 and 1, where 1 indicates a perfect positive linear relationship, -1 indicates a perfect negative linear relationship, and 0 indicates no linear relationship. The correlation coefficient is calculated using the Pearson correlation coefficient.
+
+Considering the number of animation data we have available, and that the monitored subject depicted in the data performs a various range of movements, we can assume that the data is representative of the general case. Therefore, we need to take into account all of them and generate a single correlation coefficient for each joint, wrt the spine joints. Thus, we iterate over all the files, and for each file we calculate the correlation coefficient between the spine joints and the rest of the joints for each axis (X, Y, Z). Then, we average the correlation coefficients for each joint, and we get a single correlation coefficient for each joint.
+
+<p>
+In order to visualize the correlation in a single figure and get a more interpretable view, the mean per-axis correlation coefficients have been averaged to a single value. The results are shown in the figure below.
+</p>
+
+
+<div class="subplot-container">
+    <div class="subplot">
+        <h4>Correlation Coefficients for each joint</h4>
+        <img src="./figures/bar_plot.png" alt="Correlation Coefficients">
+    </div>
+</div>
+
+
+<p>
+</p>
+
+#### Hypothesis Validation
+
+The results of the correlation analysis validate the initial hypothesis. As we can see from the figure above, the spine joints are highly correlated with the rest of the joints. Moreover, the correlation coefficients are not equal for all the joints. This means that some joints are more informative than others. Thus, we can use the joints with the highest correlation coefficients to predict the spine joints. Unsprisingly, the joints with the highest correlation coefficients are the joints that are closer to the spine joints, such as the shoulders, the hips, the head, etc. and less the joints that are further away from the spine joints, such as the feet, the ankles, etc.
+
+
+### Temporal Analysis
+
+The next step of the analysis is to perform a temporal analysis of the data. The goal of the analysis is to understand whether the spine posture is dependent on the previous time stamp and thus whether we can use the previous frames to predict the spine joints.
+
+#### Hypothesis Formulation
+
+Similarly to the spatial analysis, we can formulate a hypothesis for the temporal analysis. The hypothesis is that the spine joints are dependent on the previous frames. In other words, we can assume that the spine joints are dependent on the previous frames, and thus we can use the previous frames to predict the spine joints. Although we now practically that this is true, we need to quantify the degree of dependency, in order to understand how many previous frames we can use to predict the spine joints.
+
+#### Auto-correlation
+
+The first step of the analysis is to find the auto-correlation of the spine joints. The auto-correlation is a metric that quantifies the degree of dependency of a variable on its previous values. The auto-correlation is a value between -1 and 1, where 1 indicates a perfect positive linear relationship, -1 indicates a perfect negative linear relationship, and 0 indicates no linear relationship. In that way, we can quantify the degree of dependency of the spine joints on the previous frames.
+
+We have 4 spine joints, and thus we need to calculate the auto-correlation for each joint, on each axis (X, Y, Z). By randomly selecting a file, and calculating the auto-correlation for each joint, we get the following results:
+
+
+<div class="subplot-container">
+    <div class="subplot">
+        <h4>Auto-correlation of the spine joints</h4>
+        <img src="./figures/autocorrelation.png" alt="Auto-correlation">
+    </div>
+</div>
+
+
+We selected a lag of 20 frames since this is the maximum allowed number of frames we can use. As we can see from the figure above, the auto-correlation is high for all the joints, and thus we can assume that the spine joints are dependent on the previous frames. Howevef, one can notice that coefficient decreases considerbly for time lags that are close to the window size (20 frames). This means that a smaller window size may be more appropriate for the prediction of the spine joints.
+
+Nonetheless, we still need to figure out a way to combine the auto-correlation of the 4 spine joints, in order to get a single value that quantifies the degree of dependency of the spine joints on the previous frames. In order to do that, we can average the auto-correlation of the 4 spine joints, and get a single value that quantifies the degree of dependency of the spine joints on the previous frames. The results are shown in the figure below.
+
+<div class="subplot-container">
+    <div class="subplot">
+        <h4>Average auto-correlation of the spine joints</h4>
+        <img src="./figures/single_average_autocorrelation.png" alt="Average Auto-correlation">
+</div>
+</div>
+
+For this instance, it seems that close to lag 10, the auto-correlation is close to 0, which means that there is no linear relationship between the spine joints and the previous frames, and after the 10th frame, the auto-correlation is negative, which means that there is a negative linear relationship between the spine joints and the previous frames, which probably indicates that there is a periodicity in the data.
+
+Finally we can calculate the average auto-correlation for all the files, and get a single value that quantifies the degree of dependency of the spine joints on the previous frames. The results are shown in the figure below.
+
+<div class="subplot-container">
+    <div class="subplot">
+        <h4>Average auto-correlation of the spine joints for the whole dataset</h4>
+        <img src="./figures/global_autocorrelation.png" alt="Average Auto-correlation">
+</div>
+</div>
+
+It seems that by averaging every file, the window size that the correlation if above 0 is smaller than the previous example. Indicatively, we can see that the correlation is above 0 for a window size of ~6 for Y axis, ~8 for X axis and ~10 for Z axis. It is likely that if we use some sort of auto-regressive model, we should use a window smaller than 10 frames, and likely around the smaller window size of the 3 axes, which is 6 frames.
+
+
+<p>
+Optinally, we could delve deeper into the temporal analysis and calculate the correlation coefficient for each joint, wrt the spine joints, for each time lag.
+</p>
+
+<!--
+<p>
+Considering that we are allowed to use at most 20 frames, this will be the window size of the analysis.
+
+</p>
+
+We decide to keep the joints that are above the 70th percentile of the correlation coefficients of spatial analysis. in other words, we will keep the joints that have a correlation coefficient higher than `0.9`. The joints that belong to this split are the following:
+
+| Body Part      | Correlation coefficient  |
+|----------------|------------|
+| HipRight       | 0.951299   |
+| HipLeft        | 0.943888   |
+| EarRight       | 0.932833   |
+| ShoulderRight  | 0.929101   |
+| EarLeft        | 0.927755   |
+| EyeRight       | 0.927717   |
+| ShoulderLeft   | 0.925315   |
+| EyeLeft        | 0.924849   |
+| Nose           | 0.924667   |
+
+Therefore, we will use the joints of the Head (Nose, EyeLeft, EyeRight, EarLeft, EarRight), the shoulders (ShoulderLeft, ShoulderRight) and the hips (HipLeft, HipRight) for the temporal analysis.
+
+*Note:* These joints do not include the joints of the spine, since we want to predict the spine joints, and not use them for the prediction. However, in case we use an auto-regressive model, we could use the predicted spine joints as well. In this case, we would need to include the spine joints in the temporal analysis as well.
+
+<p>
+
+In order to perform the temporal analysis, we will use the correlation coefficient again. However, this time we will calculate a time lagged correlation coefficient. The time lagged correlation coefficient is a measure of the linear relationship between two variables, but this time we take into account the time lag between the two variables. The time lag is the number of frames that we shift the second variable. For example, if we have two variables, A and B, and we shift B by 1 frame, then the time lag is 1. The time lagged correlation coefficient is calculated using the Pearson correlation coefficient.
+
+</p>
+
+Below there is a figure that shows the time lagged correlation coefficient for each joint, w.r.t. the spine joints for a randomly selected file. The time lagged correlation coefficient is calculated for a time lag of 20 frames.
+
+*Note:* The joint "Ankle" is used on purpose, to show that the joints that are further away from the spine joints are less correlated with the spine joints.
+
+
+<div class="subplot-container">
+    <div class="subplot">
+        <h4>Time lagged correlation coefficient wrt to the Y axis</h4>
+        <img src="./figures/temporal_correlations_y_axis.png" alt="Time lagged correlation coefficient">
+    </div>
+        <div class="subplot">
+        <h4>Time lagged correlation coefficient wrt to the Z axis</h4>
+        <img src="./figures/temporal_correlations_z_axis.png" alt="Time lagged correlation coefficient">
+    </div>
+    <div class="subplot">
+        <h4>Time lagged correlation coefficient wrt to the X axis</h4>
+        <img src="./figures/temporal_correlations_x_axis.png" alt="Time lagged correlation coefficient">
+    </div>
+
+</div>
+
+<style>
+    .subplot-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .subplot {
+        flex: 1;
+        max-width: 500px;
+        text-align: center;
+    }
+</style>
+
+
+### Average Time Lagged Correlation Coefficient
+
+Similarly to the spatial analysis, we need to average the time lagged correlation coefficients for each joint that we compare against the spine joints, in order to facilitate the interpretation of the results. The results are shown in the figure below.
+
+
+<div class="subplot-container">
+    <div class="subplot">
+        <h4>Average time lagged correlation coefficient wrt to the Y axis</h4>
+        <img src="./figures/avg_temporal_correlations_y_axis.png" alt="Time lagged correlation coefficient">
+    </div>
+        <div class="subplot">
+        <h4>Average time lagged correlation coefficient wrt to the Z axis</h4>
+        <img src="./figures/avg_temporal_correlations_z_axis.png" alt="Time lagged correlation coefficient">
+    </div>
+    <div class="subplot">
+        <h4>Average time lagged correlation coefficient wrt to the X axis</h4>
+        <img src="./figures/avg_temporal_correlations_x_axis.png" alt="Time lagged correlation coefficient">
+    </div>
+
+</div>
+
+<style>
+    .subplot-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .subplot {
+        flex: 1;
+        max-width: 500px;
+        text-align: center;
+    }
+</style>
+
+### Interpretation
+
+The results of the temporal analysis can give us some insights about about the data. As we can see from the figures above, the joints that are closer to the spine joints are more correlated with the spine joints over time. More specifically, we can see that the correlation coefficient decreases considerbly for time lags that are close to the window size (20 frames). This means that a smaller window size may be more appropriate for the prediction of the spine joints.
+
+<p>
+We can also calculate what is the maximus window size that we can use, and still get a correlation coefficient that is higher than a threshold. For example, if we want to have a correlation coefficient that is higher than 0.9, w.r.t. each axis, we can use a window size of 2 for Y axis, 5 for X axis and 20 for Z axis. If we average it we get a window size of 9. This means that we can use a window size of 9 and still get a correlation coefficient that is higher than 0.9 on average, w.r.t. each axis.
+
+</p>
+
+
+If we run the temporal analysis for all the files, and calculate the average window size for each file for each each axis we find that the average window size is 9.14.
+
+## Conclusion
+
+The results of the analysis validate the initial hypothesis. The spine joints are highly correlated with the joints of the head, the shoulders and the hips. Moreover, the spine joints are dependent on the previous frames, and thus we can use the previous frames to predict the spine joints. The average window size that we can use is 9 frames. -->

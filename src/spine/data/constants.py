@@ -1,0 +1,43 @@
+SPINE_JOINTS = ["Spine", "Spine1", "Spine2", "Spine3"]
+
+EXCLUDE_JOINTS = [
+    "LeftIndexFinger",
+    "ThumbLeft",
+    "PinkyLeft",
+    "RightIndexFinger",
+    "ThumbRight",
+    "PinkyRight",
+    "EyeLeft",
+    "EyeRight",
+    "EarLeft",
+    "EarRight",
+    "ToesLeft",
+    "ToesRight",
+    "BigToeLeft",
+    "SmallToeLeft",
+    "BigToeRight",
+    "SmallToeRight",
+]
+
+CONNECTIONS = [
+    ("Head", "Spine3"),
+    ("Spine3", "Spine2"),
+    ("Spine2", "Spine1"),
+    ("Spine1", "Spine"),
+    ("ShoulderLeft", "Spine3"),
+    ("ShoulderRight", "Spine3"),
+    ("ElbowLeft", "ShoulderLeft"),
+    ("ElbowRight", "ShoulderRight"),
+    ("WristLeft", "ElbowLeft"),
+    ("WristRight", "ElbowRight"),
+    ("HipLeft", "Spine"),
+    ("HipRight", "Spine"),
+    ("KneeLeft", "HipLeft"),
+    ("KneeRight", "HipRight"),
+    ("AnkleLeft", "KneeLeft"),
+    ("AnkleRight", "KneeRight"),
+    ("HandLeft", "WristLeft"),
+    ("HandRight", "WristRight"),
+    ("FootLeft", "AnkleLeft"),
+    ("FootRight", "AnkleRight"),
+]
