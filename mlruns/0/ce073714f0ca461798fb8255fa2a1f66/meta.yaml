@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/ce073714f0ca461798fb8255fa2a1f66/artifacts
+end_time: 1693418243767
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ce073714f0ca461798fb8255fa2a1f66
+run_name: TuningTrial_LSTMModel_77WR
+run_uuid: ce073714f0ca461798fb8255fa2a1f66
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693418207754
+status: 3
+tags: []
+user_id: root

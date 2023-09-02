@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/4cccecd33da046d4a907fdb376d7324f/artifacts
+end_time: 1693417774831
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 4cccecd33da046d4a907fdb376d7324f
+run_name: TuningTrial_BaselineModel_EAE0
+run_uuid: 4cccecd33da046d4a907fdb376d7324f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417773620
+status: 3
+tags: []
+user_id: root

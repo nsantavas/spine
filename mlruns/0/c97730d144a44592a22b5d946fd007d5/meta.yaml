@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/c97730d144a44592a22b5d946fd007d5/artifacts
+end_time: 1693417784033
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: c97730d144a44592a22b5d946fd007d5
+run_name: TuningTrial_MLP_NICN
+run_uuid: c97730d144a44592a22b5d946fd007d5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417782404
+status: 3
+tags: []
+user_id: root

@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/b99c14d1ce39415cbfc4caeab20ba746/artifacts
+end_time: 1693417767761
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b99c14d1ce39415cbfc4caeab20ba746
+run_name: TuningTrial_BaselineModel_SQC8
+run_uuid: b99c14d1ce39415cbfc4caeab20ba746
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417766633
+status: 3
+tags: []
+user_id: root

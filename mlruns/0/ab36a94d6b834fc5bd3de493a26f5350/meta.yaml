@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/ab36a94d6b834fc5bd3de493a26f5350/artifacts
+end_time: 1693417768683
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ab36a94d6b834fc5bd3de493a26f5350
+run_name: TuningTrial_BaselineModel_F1H8
+run_uuid: ab36a94d6b834fc5bd3de493a26f5350
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417767765
+status: 3
+tags: []
+user_id: root

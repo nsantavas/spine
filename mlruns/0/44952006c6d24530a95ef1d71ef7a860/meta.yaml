@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/44952006c6d24530a95ef1d71ef7a860/artifacts
+end_time: 1693417780277
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 44952006c6d24530a95ef1d71ef7a860
+run_name: TuningTrial_MLP_7VUC
+run_uuid: 44952006c6d24530a95ef1d71ef7a860
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417778972
+status: 3
+tags: []
+user_id: root

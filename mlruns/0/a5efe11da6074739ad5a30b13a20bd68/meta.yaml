@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/a5efe11da6074739ad5a30b13a20bd68/artifacts
+end_time: 1693417773617
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a5efe11da6074739ad5a30b13a20bd68
+run_name: TuningTrial_BaselineModel_ZBKP
+run_uuid: a5efe11da6074739ad5a30b13a20bd68
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417772700
+status: 3
+tags: []
+user_id: root

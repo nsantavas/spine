@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/65a7d3c12c7449b28de3d299389abf47/artifacts
+end_time: 1693418031519
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 65a7d3c12c7449b28de3d299389abf47
+run_name: TuningTrial_RNNModel_DUDZ
+run_uuid: 65a7d3c12c7449b28de3d299389abf47
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417991876
+status: 3
+tags: []
+user_id: root

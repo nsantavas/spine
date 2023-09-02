@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/8288cf8240454f2680d23f541ae87879/artifacts
+end_time: 1693417885794
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 8288cf8240454f2680d23f541ae87879
+run_name: TuningTrial_RNNModel_RKI3
+run_uuid: 8288cf8240454f2680d23f541ae87879
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417856130
+status: 3
+tags: []
+user_id: root

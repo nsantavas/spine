@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/684334923c4e40f09a8cafe131ef9fe8/artifacts
+end_time: 1693417960407
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 684334923c4e40f09a8cafe131ef9fe8
+run_name: TuningTrial_RNNModel_ZIE4
+run_uuid: 684334923c4e40f09a8cafe131ef9fe8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417925719
+status: 3
+tags: []
+user_id: root

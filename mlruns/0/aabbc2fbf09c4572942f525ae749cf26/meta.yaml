@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/aabbc2fbf09c4572942f525ae749cf26/artifacts
+end_time: 1693417925713
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: aabbc2fbf09c4572942f525ae749cf26
+run_name: TuningTrial_RNNModel_XLGT
+run_uuid: aabbc2fbf09c4572942f525ae749cf26
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417885799
+status: 3
+tags: []
+user_id: root

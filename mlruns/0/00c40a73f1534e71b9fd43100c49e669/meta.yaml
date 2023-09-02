@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/00c40a73f1534e71b9fd43100c49e669/artifacts
+end_time: 1693417770729
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 00c40a73f1534e71b9fd43100c49e669
+run_name: TuningTrial_BaselineModel_CADA
+run_uuid: 00c40a73f1534e71b9fd43100c49e669
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417769789
+status: 3
+tags: []
+user_id: root

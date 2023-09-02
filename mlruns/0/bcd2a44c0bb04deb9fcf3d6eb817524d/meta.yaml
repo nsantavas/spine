@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/bcd2a44c0bb04deb9fcf3d6eb817524d/artifacts
+end_time: 1693418461243
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: bcd2a44c0bb04deb9fcf3d6eb817524d
+run_name: TuningTrial_LSTMModel_EKZO
+run_uuid: bcd2a44c0bb04deb9fcf3d6eb817524d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693418425921
+status: 3
+tags: []
+user_id: root

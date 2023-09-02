@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/7cd19e5768934a70ab30a7d3351b84cf/artifacts
+end_time: 1693417778968
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7cd19e5768934a70ab30a7d3351b84cf
+run_name: TuningTrial_MLP_E700
+run_uuid: 7cd19e5768934a70ab30a7d3351b84cf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417777458
+status: 3
+tags: []
+user_id: root

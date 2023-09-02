@@ -1,0 +1,15 @@
+artifact_uri: file://user/mlruns/0/a6f9dc5416654beb95f3d42117282fc4/artifacts
+end_time: 1693417772696
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a6f9dc5416654beb95f3d42117282fc4
+run_name: TuningTrial_BaselineModel_0T93
+run_uuid: a6f9dc5416654beb95f3d42117282fc4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693417771744
+status: 3
+tags: []
+user_id: root
